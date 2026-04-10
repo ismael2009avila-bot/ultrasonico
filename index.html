@@ -2,7 +2,7 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>Trailer PRO MAX</title>
+<title>Auto Deportivo </title>
 
 <style>
 body {
@@ -37,65 +37,64 @@ body {
   );
 }
 
-/* Trailer */
-.trailer {
+/* 🚗 Auto */
+.auto {
   position: absolute;
   bottom: 120px;
-  left: 50px;
-  display: flex;
-  align-items: center;
-  transition: left 0.3s linear;
+  left: 0px;
+  transition: left 0.4s linear;
 }
 
-/* Cabina */
-.cabina {
-  width: 70px;
-  height: 50px;
-  background: #d32f2f;
+/* Cuerpo */
+.cuerpo {
+  width: 120px;
+  height: 40px;
+  background: red;
+  border-radius: 20px 20px 10px 10px;
   position: relative;
-  border-radius: 5px 5px 0 0;
+}
+
+/* Techo */
+.techo {
+  width: 60px;
+  height: 25px;
+  background: #c62828;
+  position: absolute;
+  top: -20px;
+  left: 30px;
+  border-radius: 10px;
 }
 
 /* Ventana */
 .ventana {
-  width: 30px;
-  height: 20px;
+  width: 40px;
+  height: 15px;
   background: #90caf9;
   position: absolute;
-  top: 8px;
-  right: 5px;
-  border-radius: 3px;
+  top: 3px;
+  left: 10px;
+  border-radius: 5px;
 }
 
-/* Luz delantera */
+/* Luces */
 .luz {
-  width: 10px;
-  height: 10px;
+  width: 8px;
+  height: 8px;
   background: yellow;
   position: absolute;
-  left: -10px;
-  top: 20px;
+  left: -5px;
+  top: 15px;
   border-radius: 50%;
   box-shadow: 0 0 10px yellow;
 }
 
-/* Remolque */
-.remolque {
-  width: 200px;
-  height: 70px;
-  background: #e0e0e0;
-  border: 3px solid #bdbdbd;
-  margin-left: 5px;
-}
-
-/* Freno */
 .freno {
-  width: 10px;
-  height: 10px;
+  width: 8px;
+  height: 8px;
   background: red;
   position: absolute;
-  right: -10px;
-  top: 30px;
+  right: -5px;
+  top: 15px;
   border-radius: 50%;
   box-shadow: 0 0 10px red;
   opacity: 0;
@@ -111,10 +110,8 @@ body {
   bottom: -15px;
 }
 
-.r1 { left: 20px; }
-.r2 { left: 90px; }
-.r3 { left: 160px; }
-.r4 { left: 220px; }
+.r1 { left: 15px; }
+.r2 { left: 80px; }
 
 @keyframes girar {
   from { transform: rotate(0deg); }
@@ -129,9 +126,9 @@ body {
 .humo {
   position: absolute;
   left: -20px;
-  bottom: 20px;
-  width: 15px;
-  height: 15px;
+  bottom: 10px;
+  width: 12px;
+  height: 12px;
   background: gray;
   border-radius: 50%;
   opacity: 0;
@@ -162,25 +159,22 @@ body {
 
 <body>
 
-<h1>🚚 Trailer Inteligente PRO MAX</h1>
+<h1>🏎️ Auto Deportivo Inteligente</h1>
 <div id="distancia">Cargando...</div>
 <div id="estado"></div>
 
-<div class="trailer" id="trailer">
+<div class="auto" id="auto">
 
-  <div class="cabina">
-    <div class="ventana"></div>
+  <div class="cuerpo">
+    <div class="techo">
+      <div class="ventana"></div>
+    </div>
     <div class="luz"></div>
+    <div class="freno" id="freno"></div>
   </div>
-
-  <div class="remolque"></div>
-
-  <div class="freno" id="freno"></div>
 
   <div class="rueda r1" id="r1"></div>
   <div class="rueda r2" id="r2"></div>
-  <div class="rueda r3" id="r3"></div>
-  <div class="rueda r4" id="r4"></div>
 
   <div class="humo" id="humo"></div>
 
@@ -206,52 +200,51 @@ function actualizar() {
     document.getElementById("distancia").innerHTML =
       "Distancia: " + d + " cm";
 
-    let trailer = document.getElementById("trailer");
+    let auto = document.getElementById("auto");
     let estado = document.getElementById("estado");
     let freno = document.getElementById("freno");
     let humo = document.getElementById("humo");
 
-    let ruedas = [
-      document.getElementById("r1"),
-      document.getElementById("r2"),
-      document.getElementById("r3"),
-      document.getElementById("r4")
-    ];
+    let r1 = document.getElementById("r1");
+    let r2 = document.getElementById("r2");
 
-    let pos = 50 + (300 - d * 5);
-    if (pos > 700) pos = 700;
-    if (pos < 50) pos = 50;
+    // 👉 MOVIMIENTO COMPLETO DE IZQUIERDA A DERECHA
+    let max = window.innerWidth - 150;
+    let pos = (d / 100) * max;
 
-    trailer.style.left = pos + "px";
+    if (pos < 0) pos = 0;
+    if (pos > max) pos = max;
 
-    // 🌙 Modo noche
+    auto.style.left = pos + "px";
+
+    // 🌙 modo noche
     if (d < 20) {
       document.body.style.background = "#0b1a2a";
     } else {
       document.body.style.background = "#87ceeb";
     }
 
-    // 🚨 Freno y humo
+    // 🚨 comportamiento
     if (d < 15) {
       estado.innerHTML = "🚨 FRENANDO";
       freno.style.opacity = 1;
       humo.classList.remove("activo");
-
-      ruedas.forEach(r => r.classList.remove("girando"));
+      r1.classList.remove("girando");
+      r2.classList.remove("girando");
     } 
     else if (d < 30) {
       estado.innerHTML = "⚠️ Acercándose";
       freno.style.opacity = 0;
       humo.classList.add("activo");
-
-      ruedas.forEach(r => r.classList.add("girando"));
+      r1.classList.add("girando");
+      r2.classList.add("girando");
     } 
     else {
-      estado.innerHTML = "🟢 Avanzando";
+      estado.innerHTML = "🟢 A TODA VELOCIDAD";
       freno.style.opacity = 0;
       humo.classList.add("activo");
-
-      ruedas.forEach(r => r.classList.add("girando"));
+      r1.classList.add("girando");
+      r2.classList.add("girando");
     }
 
   })
