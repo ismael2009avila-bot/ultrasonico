@@ -2,7 +2,7 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>Trailer PRO</title>
+<title>Trailer PRO MAX</title>
 
 <style>
 body {
@@ -14,13 +14,13 @@ body {
   background: #87ceeb;
 }
 
-/* 🌆 Calle */
+/* Calle */
 .calle {
   position: absolute;
   bottom: 0;
   width: 100%;
   height: 120px;
-  background: #333;
+  background: #2b2b2b;
 }
 
 .linea {
@@ -37,7 +37,7 @@ body {
   );
 }
 
-/* 🚚 Trailer */
+/* Trailer */
 .trailer {
   position: absolute;
   bottom: 120px;
@@ -49,25 +49,59 @@ body {
 
 /* Cabina */
 .cabina {
-  width: 60px;
+  width: 70px;
   height: 50px;
-  background: red;
+  background: #d32f2f;
+  position: relative;
+  border-radius: 5px 5px 0 0;
 }
 
-/* Caja */
-.caja {
-  width: 160px;
+/* Ventana */
+.ventana {
+  width: 30px;
+  height: 20px;
+  background: #90caf9;
+  position: absolute;
+  top: 8px;
+  right: 5px;
+  border-radius: 3px;
+}
+
+/* Luz delantera */
+.luz {
+  width: 10px;
+  height: 10px;
+  background: yellow;
+  position: absolute;
+  left: -10px;
+  top: 20px;
+  border-radius: 50%;
+  box-shadow: 0 0 10px yellow;
+}
+
+/* Remolque */
+.remolque {
+  width: 200px;
   height: 70px;
-  background: white;
-  border: 3px solid #ccc;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  font-weight: bold;
-  font-size: 20px;
+  background: #e0e0e0;
+  border: 3px solid #bdbdbd;
+  margin-left: 5px;
 }
 
-/* 🛞 Ruedas */
+/* Freno */
+.freno {
+  width: 10px;
+  height: 10px;
+  background: red;
+  position: absolute;
+  right: -10px;
+  top: 30px;
+  border-radius: 50%;
+  box-shadow: 0 0 10px red;
+  opacity: 0;
+}
+
+/* Ruedas */
 .rueda {
   width: 25px;
   height: 25px;
@@ -78,8 +112,9 @@ body {
 }
 
 .r1 { left: 20px; }
-.r2 { left: 110px; }
-.r3 { left: 180px; }
+.r2 { left: 90px; }
+.r3 { left: 160px; }
+.r4 { left: 220px; }
 
 @keyframes girar {
   from { transform: rotate(0deg); }
@@ -90,30 +125,28 @@ body {
   animation: girar 0.3s linear infinite;
 }
 
-/* 💡 Luces */
-.luz {
-  width: 10px;
-  height: 10px;
-  background: yellow;
+/* 💨 Humo */
+.humo {
   position: absolute;
-  left: -10px;
-  top: 15px;
+  left: -20px;
+  bottom: 20px;
+  width: 15px;
+  height: 15px;
+  background: gray;
   border-radius: 50%;
-  box-shadow: 0 0 10px yellow;
-}
-
-.freno {
-  width: 10px;
-  height: 10px;
-  background: red;
-  position: absolute;
-  right: -10px;
-  top: 20px;
-  border-radius: 50%;
-  box-shadow: 0 0 10px red;
   opacity: 0;
 }
 
+@keyframes humoAnim {
+  0% { transform: translateY(0) scale(1); opacity: 0.6; }
+  100% { transform: translateY(-40px) scale(2); opacity: 0; }
+}
+
+.humo.activo {
+  animation: humoAnim 1s infinite;
+}
+
+/* Texto */
 #distancia {
   margin-top: 20px;
   font-size: 22px;
@@ -129,23 +162,27 @@ body {
 
 <body>
 
-<h1>🚚 Trailer Inteligente PRO</h1>
+<h1>🚚 Trailer Inteligente PRO MAX</h1>
 <div id="distancia">Cargando...</div>
 <div id="estado"></div>
 
 <div class="trailer" id="trailer">
 
   <div class="cabina">
+    <div class="ventana"></div>
     <div class="luz"></div>
   </div>
 
-  <div class="caja">TUTI</div>
+  <div class="remolque"></div>
 
   <div class="freno" id="freno"></div>
 
   <div class="rueda r1" id="r1"></div>
   <div class="rueda r2" id="r2"></div>
   <div class="rueda r3" id="r3"></div>
+  <div class="rueda r4" id="r4"></div>
+
+  <div class="humo" id="humo"></div>
 
 </div>
 
@@ -172,10 +209,14 @@ function actualizar() {
     let trailer = document.getElementById("trailer");
     let estado = document.getElementById("estado");
     let freno = document.getElementById("freno");
+    let humo = document.getElementById("humo");
 
-    let r1 = document.getElementById("r1");
-    let r2 = document.getElementById("r2");
-    let r3 = document.getElementById("r3");
+    let ruedas = [
+      document.getElementById("r1"),
+      document.getElementById("r2"),
+      document.getElementById("r3"),
+      document.getElementById("r4")
+    ];
 
     let pos = 50 + (300 - d * 5);
     if (pos > 700) pos = 700;
@@ -183,35 +224,34 @@ function actualizar() {
 
     trailer.style.left = pos + "px";
 
-    // 🛞 ruedas
-    r1.classList.add("girando");
-    r2.classList.add("girando");
-    r3.classList.add("girando");
-
-    // 🌙 MODO NOCHE
+    // 🌙 Modo noche
     if (d < 20) {
       document.body.style.background = "#0b1a2a";
     } else {
       document.body.style.background = "#87ceeb";
     }
 
-    // 🚨 FRENO
+    // 🚨 Freno y humo
     if (d < 15) {
       estado.innerHTML = "🚨 FRENANDO";
       freno.style.opacity = 1;
+      humo.classList.remove("activo");
 
-      // detener ruedas
-      r1.classList.remove("girando");
-      r2.classList.remove("girando");
-      r3.classList.remove("girando");
+      ruedas.forEach(r => r.classList.remove("girando"));
     } 
     else if (d < 30) {
       estado.innerHTML = "⚠️ Acercándose";
       freno.style.opacity = 0;
+      humo.classList.add("activo");
+
+      ruedas.forEach(r => r.classList.add("girando"));
     } 
     else {
       estado.innerHTML = "🟢 Avanzando";
       freno.style.opacity = 0;
+      humo.classList.add("activo");
+
+      ruedas.forEach(r => r.classList.add("girando"));
     }
 
   })
