@@ -2,67 +2,69 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>Recolector PRO MAX</title>
+<title>Trailer Inteligente</title>
 
 <style>
 body {
   margin: 0;
-  font-family: Arial;
-  color: white;
-  text-align: center;
+  background: #87ceeb;
   overflow: hidden;
-  transition: background 0.5s;
-  background: url('https://i.imgur.com/8IuucQZ.jpg') no-repeat center center fixed;
-  background-size: cover;
+  font-family: Arial;
+  text-align: center;
 }
 
-h1 { margin-top: 10px; }
-
-#distancia { font-size: 22px; }
-
-.escena {
-  position: relative;
-  width: 100%;
-  height: 300px;
-  margin-top: 30px;
-}
-
-/* 🗑️ Basura */
-.basura {
+/* Calle */
+.calle {
   position: absolute;
-  right: 150px;
-  bottom: 70px;
-  font-size: 50px;
-  transition: opacity 0.3s;
+  bottom: 0;
+  width: 100%;
+  height: 120px;
+  background: #333;
 }
 
-/* 🚛 Camión */
-.camion {
+/* Línea */
+.linea {
   position: absolute;
   bottom: 60px;
-  left: 50px;
-  width: 120px;
-  height: 60px;
-  transition: left 0.3s linear;
+  width: 100%;
+  height: 5px;
+  background: repeating-linear-gradient(
+    to right,
+    white 0px,
+    white 40px,
+    transparent 40px,
+    transparent 80px
+  );
 }
 
-/* Cuerpo */
-.cuerpo {
-  width: 100%;
-  height: 40px;
-  background: #e53935;
-  border-radius: 10px;
+/* Trailer */
+.trailer {
+  position: absolute;
+  bottom: 120px;
+  left: 50px;
+  display: flex;
+  align-items: center;
+  transition: left 0.3s linear;
 }
 
 /* Cabina */
 .cabina {
-  width: 40px;
-  height: 30px;
-  background: #ff7043;
-  position: absolute;
-  top: -30px;
-  right: 0;
+  width: 60px;
+  height: 50px;
+  background: red;
   border-radius: 5px;
+}
+
+/* Caja */
+.caja {
+  width: 140px;
+  height: 70px;
+  background: white;
+  border: 3px solid #ccc;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-weight: bold;
 }
 
 /* Ruedas */
@@ -72,12 +74,12 @@ h1 { margin-top: 10px; }
   background: black;
   border-radius: 50%;
   position: absolute;
-  bottom: -10px;
+  bottom: -15px;
 }
 
-/* Posición ruedas */
-.rueda1 { left: 15px; }
-.rueda2 { right: 15px; }
+.r1 { left: 20px; }
+.r2 { left: 100px; }
+.r3 { left: 160px; }
 
 /* Animación ruedas */
 @keyframes girar {
@@ -89,10 +91,10 @@ h1 { margin-top: 10px; }
   animation: girar 0.3s linear infinite;
 }
 
-#estado {
-  font-size: 26px;
+/* Texto */
+#distancia {
   margin-top: 20px;
-  font-weight: bold;
+  font-size: 22px;
 }
 
 </style>
@@ -100,31 +102,24 @@ h1 { margin-top: 10px; }
 
 <body>
 
-<h1>🚛 Recolector Inteligente PRO</h1>
+<h1>🚚 Trailer Inteligente</h1>
 <div id="distancia">Cargando...</div>
 
-<div class="escena">
+<div class="trailer" id="trailer">
+  <div class="cabina"></div>
+  <div class="caja">TUTI</div>
 
-  <div id="camion" class="camion">
-    <div class="cuerpo"></div>
-    <div class="cabina"></div>
-    <div class="rueda rueda1" id="r1"></div>
-    <div class="rueda rueda2" id="r2"></div>
-  </div>
-
-  <div id="basura" class="basura">🗑️</div>
-
+  <div class="rueda r1" id="r1"></div>
+  <div class="rueda r2" id="r2"></div>
+  <div class="rueda r3" id="r3"></div>
 </div>
 
-<div id="estado">...</div>
-
-<audio id="sonido" src="https://www.soundjay.com/button/beep-07.wav"></audio>
+<div class="calle"></div>
+<div class="linea"></div>
 
 <script>
 
 const token = "d5d327b5-b402-4f2e-8fd3-f08d67986b2f";
-
-let recogido = false;
 
 function actualizar() {
 
@@ -139,48 +134,18 @@ function actualizar() {
     document.getElementById("distancia").innerHTML =
       "Distancia: " + d + " cm";
 
-    let camion = document.getElementById("camion");
-    let basura = document.getElementById("basura");
-    let estado = document.getElementById("estado");
-    let sonido = document.getElementById("sonido");
+    let trailer = document.getElementById("trailer");
 
-    let r1 = document.getElementById("r1");
-    let r2 = document.getElementById("r2");
-
-    // 🚛 Movimiento real
     let pos = 50 + (300 - d * 5);
-    if (pos > 600) pos = 600;
+    if (pos > 700) pos = 700;
     if (pos < 50) pos = 50;
 
-    camion.style.left = pos + "px";
+    trailer.style.left = pos + "px";
 
-    // 🛞 Ruedas giran cuando se mueve
-    r1.classList.add("girando");
-    r2.classList.add("girando");
-
-    // 🧠 Lógica CORREGIDA
-    if (d > 30) {
-      document.body.style.filter = "brightness(1)";
-      estado.innerHTML = "🟢 Buscando basura...";
-      basura.style.opacity = 1;
-      recogido = false;
-    }
-    else if (d > 15) {
-      document.body.style.filter = "brightness(0.7)";
-      estado.innerHTML = "🟡 Acercándose...";
-      basura.style.opacity = 1;
-    }
-    else {
-      document.body.style.filter = "brightness(0.4)";
-      estado.innerHTML = "🚨 ¡Recolectando!";
-
-      // SOLO desaparece cuando ya llegó
-      if (!recogido) {
-        basura.style.opacity = 0;
-        sonido.play();
-        recogido = true;
-      }
-    }
+    // ruedas girando
+    document.getElementById("r1").classList.add("girando");
+    document.getElementById("r2").classList.add("girando");
+    document.getElementById("r3").classList.add("girando");
 
   })
   .catch(err => console.log(err));
