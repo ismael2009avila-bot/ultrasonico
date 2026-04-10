@@ -2,18 +2,19 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>Trailer Inteligente</title>
+<title>Trailer PRO</title>
 
 <style>
 body {
   margin: 0;
-  background: #87ceeb;
   overflow: hidden;
   font-family: Arial;
   text-align: center;
+  transition: 0.5s;
+  background: #87ceeb;
 }
 
-/* Calle */
+/* 🌆 Calle */
 .calle {
   position: absolute;
   bottom: 0;
@@ -22,7 +23,6 @@ body {
   background: #333;
 }
 
-/* Línea */
 .linea {
   position: absolute;
   bottom: 60px;
@@ -37,7 +37,7 @@ body {
   );
 }
 
-/* Trailer */
+/* 🚚 Trailer */
 .trailer {
   position: absolute;
   bottom: 120px;
@@ -52,12 +52,11 @@ body {
   width: 60px;
   height: 50px;
   background: red;
-  border-radius: 5px;
 }
 
 /* Caja */
 .caja {
-  width: 140px;
+  width: 160px;
   height: 70px;
   background: white;
   border: 3px solid #ccc;
@@ -65,9 +64,10 @@ body {
   justify-content: center;
   align-items: center;
   font-weight: bold;
+  font-size: 20px;
 }
 
-/* Ruedas */
+/* 🛞 Ruedas */
 .rueda {
   width: 25px;
   height: 25px;
@@ -78,10 +78,9 @@ body {
 }
 
 .r1 { left: 20px; }
-.r2 { left: 100px; }
-.r3 { left: 160px; }
+.r2 { left: 110px; }
+.r3 { left: 180px; }
 
-/* Animación ruedas */
 @keyframes girar {
   from { transform: rotate(0deg); }
   to { transform: rotate(360deg); }
@@ -91,10 +90,38 @@ body {
   animation: girar 0.3s linear infinite;
 }
 
-/* Texto */
+/* 💡 Luces */
+.luz {
+  width: 10px;
+  height: 10px;
+  background: yellow;
+  position: absolute;
+  left: -10px;
+  top: 15px;
+  border-radius: 50%;
+  box-shadow: 0 0 10px yellow;
+}
+
+.freno {
+  width: 10px;
+  height: 10px;
+  background: red;
+  position: absolute;
+  right: -10px;
+  top: 20px;
+  border-radius: 50%;
+  box-shadow: 0 0 10px red;
+  opacity: 0;
+}
+
 #distancia {
   margin-top: 20px;
   font-size: 22px;
+}
+
+#estado {
+  font-size: 24px;
+  margin-top: 10px;
 }
 
 </style>
@@ -102,16 +129,24 @@ body {
 
 <body>
 
-<h1>🚚 Trailer Inteligente</h1>
+<h1>🚚 Trailer Inteligente PRO</h1>
 <div id="distancia">Cargando...</div>
+<div id="estado"></div>
 
 <div class="trailer" id="trailer">
-  <div class="cabina"></div>
+
+  <div class="cabina">
+    <div class="luz"></div>
+  </div>
+
   <div class="caja">TUTI</div>
+
+  <div class="freno" id="freno"></div>
 
   <div class="rueda r1" id="r1"></div>
   <div class="rueda r2" id="r2"></div>
   <div class="rueda r3" id="r3"></div>
+
 </div>
 
 <div class="calle"></div>
@@ -135,6 +170,12 @@ function actualizar() {
       "Distancia: " + d + " cm";
 
     let trailer = document.getElementById("trailer");
+    let estado = document.getElementById("estado");
+    let freno = document.getElementById("freno");
+
+    let r1 = document.getElementById("r1");
+    let r2 = document.getElementById("r2");
+    let r3 = document.getElementById("r3");
 
     let pos = 50 + (300 - d * 5);
     if (pos > 700) pos = 700;
@@ -142,10 +183,36 @@ function actualizar() {
 
     trailer.style.left = pos + "px";
 
-    // ruedas girando
-    document.getElementById("r1").classList.add("girando");
-    document.getElementById("r2").classList.add("girando");
-    document.getElementById("r3").classList.add("girando");
+    // 🛞 ruedas
+    r1.classList.add("girando");
+    r2.classList.add("girando");
+    r3.classList.add("girando");
+
+    // 🌙 MODO NOCHE
+    if (d < 20) {
+      document.body.style.background = "#0b1a2a";
+    } else {
+      document.body.style.background = "#87ceeb";
+    }
+
+    // 🚨 FRENO
+    if (d < 15) {
+      estado.innerHTML = "🚨 FRENANDO";
+      freno.style.opacity = 1;
+
+      // detener ruedas
+      r1.classList.remove("girando");
+      r2.classList.remove("girando");
+      r3.classList.remove("girando");
+    } 
+    else if (d < 30) {
+      estado.innerHTML = "⚠️ Acercándose";
+      freno.style.opacity = 0;
+    } 
+    else {
+      estado.innerHTML = "🟢 Avanzando";
+      freno.style.opacity = 0;
+    }
 
   })
   .catch(err => console.log(err));
